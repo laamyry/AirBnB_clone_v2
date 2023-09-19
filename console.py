@@ -126,7 +126,7 @@ class HBNBCommand(cmd.Cmd):
             return
         attributes = {}
 
-        for param in args[1]:
+        for param in args[1:]:
             param_parts = param.split('=')
             if len(param_parts) != 2:
                 print(f"Skipping invalid parameter: {param}")
@@ -140,13 +140,13 @@ class HBNBCommand(cmd.Cmd):
                 try:
                     value = float(value)
                 except ValueError:
-                    print(f"Skipping invalid parameter: {param}")
+                    print(f"Skipping invalid float parameter: {param}")
                     continue
             else:
                 try:
                     value = int(value)
                 except ValueError:
-                    print(f"Skipping invalid parameter: {param}")
+                    print(f"Skipping invalid int parameter: {param}")
                     continue
 
             attributes[key] = value
