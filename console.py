@@ -128,6 +128,10 @@ class HBNBCommand(cmd.Cmd):
             key, value = param.split('=')
             if value.startswith('"') and value.endswith('"'):
                 value = value[1:-1].replace('_', ' ')
+            else:
+                value = float(value) if '.' in value else value
+            attrs[key] = value
+            
 
         new_instance = HBNBCommand.classes[args]()
         storage.save()
