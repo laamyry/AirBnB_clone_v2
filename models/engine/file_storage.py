@@ -54,4 +54,6 @@ class FileStorage:
             '''new public instance method to delete object'''
             if obj is not None:
                 key = obj.__class__.__name__ + ' ' + obj.id
+                if key in FileStorage.__objects:
+                    del FileStorage.__objects[key]
     
