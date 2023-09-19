@@ -118,9 +118,19 @@ class HBNBCommand(cmd.Cmd):
         if not args:
             print("** class name missing **")
             return
-        elif args not in HBNBCommand.classes:
+        args = args.split(' ')
+        create = args[0]
+        
+        if create not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
+        attributes = {}
+
+        for param in args[1]:
+            param_parts = param.split('=')
+            print(f"Skipping invalid parameter: {param_parts}")
+            continue
+
         new_instance = HBNBCommand.classes[args]()
         storage.save()
         print(new_instance.id)
