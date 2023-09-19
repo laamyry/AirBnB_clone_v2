@@ -114,45 +114,34 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """ Create an object of any class"""
+        """Create an object of any class"""
         if not args:
             print("** class name missing **")
             return
-        args = args.split(' ')
-        create = args[0]
         
+        arg = args.split()
+        create = arg[0]
         if create not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        attributes = {}
+        
+        new_instance = HBNBCommand.classes[create]()
+        for param_parts in range(1, len(arg)):
+            param_array = arg[param_parts].split("=")
+            if len(param_array) == 2:
+                key = param_array[0]
 
-        for param in args[1:]:
-            param_parts = param.split('=')
-            if len(param_parts) != 2:
-                print(f"Skipping invalid parameter: {param}")
-                continue
-            key = param_parts[0]
-            value = param_parts[1]
-
-            if value.startswith('"') and value.endswith('"'):
-                value = value[1:-1].replace('_', ' ')
-            elif '.' in value: 
-                try:
-                    value = float(value)
-                except ValueError:
-                    print(f"Skipping invalid float parameter: {param}")
+                if key not in HBNBCommand.valid_keys[create]:
                     continue
+                value = self.parse_value(param_array[1])
+
+                if value is not None:
+                    setattr(new_instance, key, value)
             else:
-                try:
-                    value = int(value)
-                except ValueError:
-                    print(f"Skipping invalid int parameter: {param}")
-                    continue
+                pass
 
-            attributes[key] = value
 
-        new_instance = HBNBCommand.classes[args]()
-        storage.save()
+        new_instance.save()
         print(new_instance.id)
 
     def help_create(self):
@@ -259,7 +248,7 @@ class HBNBCommand(cmd.Cmd):
 
     def help_count(self):
         """ """
-        print("Usage: count <class_name>")
+        print("Usage: count <create>")
 
     def do_update(self, args):
         """ Updates a certain object with new info """
