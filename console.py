@@ -128,8 +128,29 @@ class HBNBCommand(cmd.Cmd):
 
         for param in args[1]:
             param_parts = param.split('=')
-            print(f"Skipping invalid parameter: {param_parts}")
-            continue
+            if len(param_parts) != 2:
+                print(f"Skipping invalid parameter: {param}")
+                continue
+            key = param_parts[0]
+            value = param_parts[1]
+
+            if value.startswith('"') and value.endswith('"'):
+                value = value[1:-1].replace('_', ' ')
+            elif '.' in value: 
+                try:
+                    value = float(value)
+                except ValueError:
+                    print(f"Skipping invalid parameter: {param}")
+                    continue
+            else:
+                try:
+                    value = int(value)
+                except ValueError:
+                    print(f"Skipping invalid parameter: {param}")
+                    continue
+
+            
+
 
         new_instance = HBNBCommand.classes[args]()
         storage.save()
