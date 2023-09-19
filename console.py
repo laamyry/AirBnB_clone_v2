@@ -130,7 +130,7 @@ class HBNBCommand(cmd.Cmd):
                 if value.startswith('"') and value.endswith('"'):
                     value = value[1:-1].replace('_', ' ')
                 else:
-                    value = float(value) if '.' in value else value
+                    value = float(value) if '.' in value else int(value)
                 attrs[key] = value
             except ValueError:
                 pass
