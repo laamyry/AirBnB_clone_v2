@@ -120,18 +120,18 @@ class HBNBCommand(cmd.Cmd):
             return
         
         arg = args.split()
-        create = arg[0]
-        if create not in HBNBCommand.classes:
+        class_name = arg[0]
+        if class_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
         
-        new_instance = HBNBCommand.classes[create]()
+        new_instance = HBNBCommand.classes[class_name]()
         for param_parts in range(1, len(arg)):
             param_array = arg[param_parts].split("=")
-            if len(param_array) == 2:
+            if len(param_array) != 2:
                 key = param_array[0]
 
-                if key not in HBNBCommand.valid_keys[create]:
+                if key not in HBNBCommand.valid_keys[class_name]:
                     continue
                 value = self.parse_value(param_array[1])
 
@@ -140,14 +140,13 @@ class HBNBCommand(cmd.Cmd):
             else:
                 pass
 
-
         new_instance.save()
         print(new_instance.id)
 
     def help_create(self):
-        """ Help information for the create method """
+        """ Help information for the class_name method """
         print("Creates a class of any type")
-        print("[Usage]: create <className>\n")
+        print("[Usage]: class_name <className>\n")
 
     def do_show(self, args):
         """ Method to show an individual object """
@@ -248,7 +247,7 @@ class HBNBCommand(cmd.Cmd):
 
     def help_count(self):
         """ """
-        print("Usage: count <create>")
+        print("Usage: count <class_name>")
 
     def do_update(self, args):
         """ Updates a certain object with new info """
