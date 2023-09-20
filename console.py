@@ -2,7 +2,7 @@
 """ Console Module """
 import cmd
 import sys
-from models.base_model import BaseModel
+from models.base_model import BaseModel, Base
 from models.__init__ import storage
 from models.user import User
 from models.place import Place
@@ -113,15 +113,47 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
-    def do_create(self, args):
+    def do_create(self, arg):
         """ Create an object of any class"""
-        if not args:
+        if not arg:
             print("** class name missing **")
             return
-        elif args not in HBNBCommand.classes:
+        args = arg.split()
+        class_name = args[0]
+        params = args[1:]
+
+        if class_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        new_instance = HBNBCommand.classes[args]()
+        
+        ps_obj = {}
+
+        while i < len(params):
+            ps_parts = params[i].split('=')
+            if len(ps_parts) == 2:
+                i += 1
+                continue
+            
+            key, value = ps_parts
+            key = key.replace('_', ' ')
+
+            if value.startswith('"') and value.endswith('"') :
+                value = value[1:-1].replace('\\', '"')
+
+            if '.' in value:
+                try:
+                    value = float(value)
+                except ValueError:
+                    pass
+            else:
+                try:
+                    value = int(value)
+                except ValueError:
+                    pass
+
+            ps_obj[key] = value
+
+        new_instance = HBNBCommand.classes[class_name](**ps_obj)
         storage.save()
         print(new_instance.id)
         storage.save()
