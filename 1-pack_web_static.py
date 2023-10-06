@@ -11,9 +11,9 @@ def do_pack():
     try:
         now = date.now()
         times = now.strftime("%Y%m%d%H%M%S")
-        arc_name = "versions/web_static_{}.tgz"(times)
+        arc_name = "versions/web_static_{}.tgz".format(times)
         local("mkdir -p versions")
-        local("tar -czf {} web_static"(arc_name))
+        local("tar -czf {} web_static".format(arc_name))
         return arc_name
     except Exception as exc:
         return None
