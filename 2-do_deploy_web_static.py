@@ -8,16 +8,16 @@ env.hosts = ['100.26.132.85', '	100.26.167.53']
 env.user = 'ubuntu'
 env.key_filename = '~/.ssh/school'
 
-def do_deploy(arc_path):
-    if not os.path.exists(arc_path):
+def do_deploy(archive_path):
+    if not os.path.exists(archive_path):
         return False
 
     try:
-        arc_name = os.path.basename(arc_path)
+        arc_name = os.path.basename(archive_path)
         rem_path = "/tmp/{}".format(arc_name)
         rel_path = "/data/web_static/releases/{}/".format(arc_name[:4])
 
-        put(arc_path, rem_path)
+        put(archive_path, rem_path)
         run("mkdir -p {}".format(rel_path))
         run("tar -czf {} -C {}".format(rem_path, rel_path))
         run("rm {}".format(rem_path))
