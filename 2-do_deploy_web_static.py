@@ -8,6 +8,7 @@ env.hosts = ['100.26.132.85', '	100.26.167.53']
 env.user = 'ubuntu'
 env.key_filename = '~/.ssh/school'
 
+
 def do_deploy(archive_path):
     if not os.path.exists(archive_path):
         return False
