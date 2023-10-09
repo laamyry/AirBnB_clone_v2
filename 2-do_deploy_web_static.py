@@ -28,10 +28,9 @@ def do_deploy(archive_path):
         return False
 
     try:
-
         put(archive_path, '/tmp/')
-        arc_file = archive_path.split('/')[-1]
-        arc_file_no_ex = arc_file.split('.')[0]
+        arc_file = os.path.basename(archive_path)  # Get the archive file name
+        arc_file_no_ex = os.path.splitext(arc_file)[0]  # Remove the file extension
         rel_folder = "/data/web_static/releases/{}".format(arc_file_no_ex)
         run("mkdir -p {}".format(rel_folder))
         run("tar -xzf /tmp/{} -C {}".format(arc_file, rel_folder))
