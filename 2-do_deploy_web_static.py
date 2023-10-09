@@ -28,18 +28,18 @@ def do_deploy(archive_path):
         return False
 
     try:
-        archive_name = os.path.basename(archive_path)
-        rem_path = "/tmp/{}".format(archive_name)
-        rel_path = "/data/web_static/releases/{}/".format(archive_name[:-4])
 
-        put(archive_path, rem_path)
-        run("mkdir -p {}".format(rel_path))
-        run("tar -xzf {} -C {}".format(rem_path, rel_path))
-        run("rm {}".format(rem_path))
-        run("mv {}web_static/* {}".format(rel_path, rel_path))
-        run("rm -rf {}web_static".format(rel_path))
+        put(archive_path, '/tmp/')
+        arc_file = archive_path.split('/')[-1]
+        arc_file_no_ex = arc_file.split('.')[0]
+        rel_folder = "/data/web_static/releases/{}".format(arc_file_no_ex)
+        run("mkdir -p {}".format(rel_folder))
+        run("tar -xzf /tmp/{} -C {}".format(arc_file, rel_folder))
+        run("rm /tmp/{}".format(arc_file))
+        run("mv {}/web_static/* {}".format(rel_folder, rel_folder))
+        run("rm -rf {}/web_static".format(rel_folder))
         run("rm -rf /data/web_static/current")
-        run("ln -s {} /data/web_static/current".format(rel_path))
+        run("ln -s {} /data/web_static/current".format(rel_folder))
         print("New version deployed!")
 
     except Exception as exc:
