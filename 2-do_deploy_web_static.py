@@ -28,6 +28,7 @@ def do_deploy(archive_path):
         return False
 
     try:
+        env.show = 'True'  # Enable command details display
         put(archive_path, '/tmp/')
         arc_file = os.path.basename(archive_path)  # Get the archive file name
         arc_file_no_ex = os.path.splitext(arc_file)[0]  # Remove the file extension
