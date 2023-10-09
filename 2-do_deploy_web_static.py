@@ -41,7 +41,6 @@ def do_deploy(archive_path):
         run("rm -rf /data/web_static/current")
         run("ln -s {} /data/web_static/current".format(rel_folder))
         print("New version deployed!")
-
-    except Exception as exc:
-        print("Error: {}".format(exc))
+        return True
+    except Exception:
         return False
