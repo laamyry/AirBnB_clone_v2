@@ -1,11 +1,40 @@
 #!/usr/bin/python3
-''''Fabric script (based on the file 1-pack_web_static.py) that distributes
-an archive to your web servers, using the function do_deploy:'''
-from fabric.api import env, run, put, local
-import os
+'''distributes an archive to your web servers, using the function do_deploy:'''
+
+from fabric.api import env, put, run, local
+from fabric.decorators import task
+from os.path import exists
 from datetime import datetime as date
 
+env.hosts = ['100.26.132.85', '100.26.167.53']
 
+
+@task
+def do_deploy(archive_path):
+    if not exists(archive_path):
+        return False
+    arc_file = archive_path.split('/')[-1]
+    arc_name = arc_file.replace('.tgz', '')
+    print(arc_file, arc_name)
+    try:
+        put(archive_path, '/tmp/')
+        run('mkdir -p /data/web_static/releases/{}'.format(arc_name))
+        run('tar -xzf /tmp/{} -C /data/web_static/releases/{}\
+            '.format(arc_file, arc_name))
+        run('rm -rf /tmp/{}'.format(arc_file))
+        run('mv /data/web_static/releases/{}/web_static/* \
+            /data/web_static/releases/{}'.format(arc_name, arc_name))
+        run('rm -rf /data/web_static/releases/{}/web_static\
+            '.format(arc_name))
+        run('rm -rf /data/web_static/current')
+        run('ln -s /data/web_static/releases/{}/ \
+            /data/web_static/current'.format(arc_name))
+        return True
+    except Exception:
+        return False
+
+
+@task
 def do_pack():
     '''Compress before sending'''
     try:
@@ -17,30 +46,3 @@ def do_pack():
         return arc_name
     except Exception as exc:
         return None
-
-
-env.hosts = ['100.26.132.85', '100.26.167.53']
-
-
-def do_deploy(archive_path):
-    '''Distributing archive to the web server.'''
-    if not os.path.exists(archive_path):
-        return False
-
-    try:
-        env.show = 'True'  # Enable command details display
-        put(archive_path, '/tmp/')
-        arc_file = os.path.basename(archive_path)  # Get the archive file name
-        arc_file_no_ex = os.path.splitext(arc_file)[0]  # Remove the file extension
-        rel_folder = "/data/web_static/releases/{}".format(arc_file_no_ex)
-        run("mkdir -p {}".format(rel_folder))
-        run("tar -xzf /tmp/{} -C {}".format(arc_file, rel_folder))
-        run("rm /tmp/{}".format(arc_file))
-        run("mv {}/web_static/* {}".format(rel_folder, rel_folder))
-        run("rm -rf {}/web_static".format(rel_folder))
-        run("rm -rf /data/web_static/current")
-        run("ln -s {} /data/web_static/current".format(rel_folder))
-        print("New version deployed!")
-        return True
-    except Exception:
-        return False
