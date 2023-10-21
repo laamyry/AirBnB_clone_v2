@@ -6,11 +6,6 @@ from flask import Flask
 exu = Flask(__name__)
 
 
-@exu.route('/', strict_slashes=False)
-def acc():
-    return 'Hello HBNB!'
-
-
 @exu.route('/hbnb', strict_slashes=False)
 def hbnb():
     return 'HBNB'
