@@ -17,4 +17,4 @@ def hbnb():
 
 
 if __name__ == '__main__':
-    exu.run(host='0.0.0.0', port=500)
+    exu.run(host='0.0.0.0', port=5000)
