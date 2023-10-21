@@ -5,22 +5,7 @@ from flask import Flask
 
 exu = Flask(__name__)
 
-
-@exu.route('/', strict_slashes=False)
-def acc():
-    return 'Hello HBNB!'
-
-
-@exu.route('/hbnb', strict_slashes=False)
-def hbnb():
-    return 'HBNB'
-
-
-@exu.route('/c/<text>', strict_slashes=False)
-def c_is_fun(text):
-    return 'C ' + text.replace('_', ' ')
-
-
+@exu.route('/python', strict_slashes=False)
 @exu.route('/python/<text>', strict_slashes=False)
 def python_is_cool(text='is cool'):
     return 'Python ' + text.replace('_', ' ')
