@@ -1,21 +1,22 @@
 #!/usr/bin/python3
-'''starts a Flask web application:'''
-from flask import Flask, render_template as templates
-from models import *
+'''Starts a Flask web application.'''
 from models import storage
-exu = Flask(__name__)
+from flask import Flask
+from flask import render_template as template
+
+app = Flask(__name__)
 
 
-@exu.route('/states_list', strict_slashes=False)
+@app.route("/states_list", strict_slashes=False)
 def states_list():
-    states = sorted(list(storage.all("State").values()), key=lambda x: x.name)
-    return templates('7-states_list.html', states=states)
+    states = storage.all("State")
+    return template("7-states_list.html", states=states)
 
 
-@exu.teardown_appcontext
-def teardown_db(exception):
+@app.teardown_appcontext
+def teardown(exc):
     storage.close()
 
 
-if __name__ == '__main__':
-    exu.run(host='0.0.0.0', port='5000')
+if __name__ == "__main__":
+    app.run(host="0.0.0.0")
