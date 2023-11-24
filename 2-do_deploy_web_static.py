@@ -10,6 +10,20 @@ env.hosts = ['100.26.132.85', '100.26.167.53']
 
 
 @task
+def do_pack():
+    '''Compress before sending'''
+    try:
+        now = date.now()
+        times = now.strftime("%Y%m%d%H%M%S")
+        arc_name = "versions/web_static_{}.tgz".format(times)
+        local("mkdir -p versions")
+        local("tar -czf {} web_static".format(arc_name))
+        return arc_name
+    except Exception as exc:
+        return None
+
+
+@task
 def do_deploy(archive_path):
     if not exists(archive_path):
         return False
@@ -32,17 +46,3 @@ def do_deploy(archive_path):
         return True
     except Exception:
         return False
-
-
-@task
-def do_pack():
-    '''Compress before sending'''
-    try:
-        now = date.now()
-        times = now.strftime("%Y%m%d%H%M%S")
-        arc_name = "versions/web_static_{}.tgz".format(times)
-        local("mkdir -p versions")
-        local("tar -czf {} web_static".format(arc_name))
-        return arc_name
-    except Exception as exc:
-        return None
