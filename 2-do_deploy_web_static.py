@@ -3,7 +3,7 @@
 
 from fabric.api import env, put, run, local
 from fabric.decorators import task
-from os.path import exists
+import os
 from datetime import datetime as date
 
 env.hosts = ['100.26.132.85', '100.26.167.53']
@@ -11,38 +11,33 @@ env.hosts = ['100.26.132.85', '100.26.167.53']
 
 @task
 def do_pack():
-    '''Compress before sending'''
-    try:
-        now = date.now()
-        times = now.strftime("%Y%m%d%H%M%S")
-        arc_name = "versions/web_static_{}.tgz".format(times)
-        local("mkdir -p versions")
-        local("tar -czf {} web_static".format(arc_name))
-        return arc_name
-    except Exception as exc:
-        return None
+    format_date = date.now().strftime('%Y%m%d%H%M%S')
+    mkdir = "mkdir -p versions"
+    path = "versions/web_static_{}.tgz".format(format_date)
+    print("Packing web_static to {}".format(path))
+    if local("{} && tar -cvzf {} web_static".format(mkdir, path)).succeeded:
+        return path
+    return None
 
 
 @task
 def do_deploy(archive_path):
-    if not exists(archive_path):
-        return False
-    arc_file = archive_path.split('/')[-1]
-    arc_name = arc_file.replace('.tgz', '')
-    print(arc_file, arc_name)
     try:
-        put(archive_path, '/tmp/')
-        run('mkdir -p /data/web_static/releases/{}'.format(arc_name))
-        run('tar -xzf /tmp/{} -C /data/web_static/releases/{}\
-            '.format(arc_file, arc_name))
-        run('rm -rf /tmp/{}'.format(arc_file))
-        run('mv /data/web_static/releases/{}/web_static/* \
-            /data/web_static/releases/{}'.format(arc_name, arc_name))
-        run('rm -rf /data/web_static/releases/{}/web_static\
-            '.format(arc_name))
-        run('rm -rf /data/web_static/current')
-        run('ln -s /data/web_static/releases/{}/ \
-            /data/web_static/current'.format(arc_name))
+        if not os.path.exists(archive_path):
+            return False
+        with_exi = os.path.basename(archive_path)
+        not_exi, ext = os.path.splitext(with_exi)
+        deploy_path = "/data/web_static/releases/"
+        put(archive_path, "/tmp/")
+        run("rm -rf {}{}/".format(deploy_path, not_exi))
+        run("mkdir -p {}{}/".format(deploy_path, not_exi))
+        run("tar -xzf /tmp/{} -C {}{}/".format(with_exi, deploy_path, not_exi))
+        run("rm /tmp/{}".format(with_exi))
+        run("mv {0}{1}/web_static/* {0}{1}/".format(deploy_path, not_exi))
+        run("rm -rf {}{}/web_static".format(deploy_path, not_exi))
+        run("rm -rf /data/web_static/current")
+        run("ln -s {}{}/ /data/web_static/current".format(deploy_path, not_exi))
+        print("New version deployed!")
         return True
     except Exception:
         return False
